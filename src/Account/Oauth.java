@@ -3,16 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vk;
+package Account;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
 
 
 /**
@@ -26,7 +23,9 @@ public class Oauth {
     "redirect_uri=REDIRECT_URI&"+
     "display=DISPLAY&"+
     "v=API_VERSION&"+
-    "response_type=token";      
+    "response_type=token";
+    private String accessRequest = "";
+    private String access_token;
     
     private Oauth (final ApiBuilder ab){
         this.request = request.replace("APP_ID",ab.getClient_id())
@@ -42,40 +41,46 @@ public class Oauth {
     public String getRequest(){
         return request;
     }
-    public String doOauth() throws IOException{
-        URL url = new URL(this.getRequest());
+   
+    public String getRedirectLink(String email, String password) throws IOException{ // getting new params and making another request
+        URL url = new URL(request);
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("content-type", "text/plain;charset=utf-8 ");
-        connection.setRequestProperty("Accept", "*/*");
-        connection.setRequestProperty("Accept-Language", "ru-RU,ru;q=0.8,en-US;q=0.6,en;q=0.4");
-        String text,ip_h,lg_h,to,action;
+        String text,ip_h,lg_h,to,action,origin;
         text = "";
         ip_h = "";
         lg_h = "";
         to = "";
         action = "";
-        int index = 0;                                                                             //Здесь я пытаюсь получить все значения
-        BufferedReader BR = new BufferedReader(new InputStreamReader(connection.getInputStream()));//из <form> и сформировать пост-запрос.
-        FileWriter fw = new FileWriter(new File("text.txt"));
-        Scanner scan = new Scanner(connection.getInputStream());
+        origin =  "";
+        int index = 0;                                                                             
+        BufferedReader BR = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         while ((text = BR.readLine()) != null) {
+           // System.out.println(text);
         if (text.contains("action=\"https")){
             action =text.substring(text.indexOf("https"),text.indexOf("\">"));
         }
         if (text.contains("ip_h")){
-            ip_h = text.substring(text.indexOf("value=\"")+7, text.indexOf("/>")-4);
+            ip_h = text.substring(text.indexOf("value=\"")+7, text.indexOf("/>")-2);
         }
         if (text.contains("lg_h")){
-            lg_h = text.substring(text.indexOf("value=\"")+7, text.indexOf("/>")-4);
+            lg_h = text.substring(text.indexOf("value=\"")+7, text.indexOf("/>")-2);
         }
         if (text.contains("name=\"to\"")){
             to = text.substring(text.indexOf("value=\"")+7, text.indexOf("\">"));
         }
+        if (text.contains("name=\"_origin")){
+            origin = text.substring(text.indexOf("value=\"")+7,text.indexOf("\">"));
         }
-        
-       return action+"&ip_h"+ip_h+"&lg_h"+lg_h+"&to"+to+"&"; 
+        }
+        accessRequest = action+"&_origin="+origin+"&ip_h="+ip_h+"&lg_h="+lg_h+"&to="+to+"&email="+email+"&pass="+password;
+        return accessRequest; 
     }
+
+    public String getAccessRequest() {
+        return accessRequest;
+    }
+    
     
     public class ApiBuilder{
         
