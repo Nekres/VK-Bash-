@@ -3,9 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Projects/NetBeansProjects/Vk/src/vk/Oauth.java</file>
-            <file>file:/D:/Projects/NetBeansProjects/Vk/src/vk/NewFXMain.java</file>
-            <file>file:/D:/Projects/NetBeansProjects/Vk/src/vk/Main.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/DataXMLParsers/JAXBParser.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/User.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Main/ConsoleUI/Controller.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Account/AccessToken.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/DataXMLParsers/Parser.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/Response.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Main/Main.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/ResponseHandler/ResponseHandler.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/Friends/Friend.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Account/Oauth.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/Friends/XMLFriendParser.java</file>
         </group>
     </open-files>
 </project-private>

@@ -9,6 +9,6 @@ package VkExceptions;
  *
  * @author Nekres
  */
-public class TokenTimeExpiredException {
+public class TokenTimeExpiredException extends Exception{
     
 }

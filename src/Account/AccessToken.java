@@ -17,13 +17,11 @@ import java.io.IOException;
  */
 public class AccessToken {
     private final String access_token;
-    private final String expires_in;
     private final int uid;
     private final File token;
 
     public AccessToken(File token) throws Exception{
         this.access_token = takeToken(token);
-        this.expires_in = takeExpireTime(token);
         this.uid = getId(token);
         this.token = token;
     }
@@ -36,9 +34,6 @@ public class AccessToken {
             token = token.substring(token.indexOf("access_token=")+13, token.indexOf("&"));
             return token;
     }
-    private String takeExpireTime(File file){
-     return null;   
-    }
     private String read(File file) throws FileNotFoundException,IOException{
         FileReader read = new FileReader(file);
             BufferedReader br = new BufferedReader(read);
@@ -47,8 +42,11 @@ public class AccessToken {
     }
     private int getId(File file)throws FileNotFoundException,IOException{
       String uid = read(file);
-      uid = uid.substring(uid.indexOf("id=")+3, uid.length()-1);
+      uid = uid.substring(uid.indexOf("id=")+3, uid.length());
       return Integer.valueOf(uid);
+    }
+    public String getAccess_token(){
+        return access_token;
     }
     
 }
