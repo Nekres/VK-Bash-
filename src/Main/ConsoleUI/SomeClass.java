@@ -3,12 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package VkExceptions;
+package Main.ConsoleUI;
 
 /**
  *
  * @author Nekres
  */
-public class PrivacySettingsException extends Exception{
+public class SomeClass {
+  //  static{
+  //      System.loadLibrary("SomeClass.h");
+  //  }
+    native public static void printOne();
+    native public static void printTwo();
+    
     
 }

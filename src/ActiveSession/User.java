@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -61,30 +62,32 @@ public class User  {
     }
     private int takeUnreadMessages() throws MalformedURLException,IOException,InterruptedException,JAXBException,BadParamsException{
         JAXBParser parser = new JAXBParser();
-        List<Message> message = Message.get(0, 0, 100, 0, 1, 0, 0,token);
         int i = 0;
         int count = 0;
+        try{
+        List<Message> message = Message.get(0, 0, 100, 0, 1, 0, 0,token);
         while ( i < message.size() ){
             if (message.get(i).getRead_state() == 0){
             count++;   
             }
             i++;
         }
+        }catch(BadParamsException e){
+            count = 0;
+        }
           return count;
     }
     public static BufferedReader connect(URL url) throws IOException,ConnectException,InterruptedException{
      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-     connection.setConnectTimeout(5000);
+     connection.setConnectTimeout(15000);
      BufferedReader reader;
      try{
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-     }catch(ConnectException e){
-        System.out.println("\ni catched this");
+     }catch(SocketTimeoutException e){
         connection.disconnect();
         connection.connect();
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
      }
-     
      return reader;
     }
     public List<Friend> takeFriend() throws IOException,JAXBException{

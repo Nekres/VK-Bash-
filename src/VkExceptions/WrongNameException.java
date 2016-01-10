@@ -9,6 +9,6 @@ package VkExceptions;
  *
  * @author Nekres
  */
-public class WrongNameException extends Exception{
+public class WrongNameException extends BadParamsException{
     
 }

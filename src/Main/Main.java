@@ -7,6 +7,7 @@ package Main;
 
 import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
+import ActiveSession.DataTypes.Message;
 import ActiveSession.User;
 import Main.ConsoleUI.Controller;
 import java.io.File;
@@ -31,17 +32,22 @@ public class Main{
             System.out.println("Raskolnikov v1.0 launched.");
             Controller.printWelcomeMessage("Добро пожаловать в чат! Он работает как командная строка. Список команд -help :",user);
             List<Friend> friends = Friend.get(user.getId(),"name",100,0,"city,domain","nom",token);
+            List<Message> messages = Message.getHistory(10,193539805,token);
             Scanner scan = new Scanner(System.in,"866");
             String choice;
-            boolean close = true;
-            while(close){
-            choice = scan.nextLine().trim();
+            boolean notClose = true;
+            while(notClose){
+            choice = scan.nextLine().trim().toLowerCase();
             switch(choice){
+                case "-m history":Controller.returnDialog(user, token);
+                    break;
+                case "-f all":Controller.printFriends(user);
+                    break;
                 case "-f online":Controller.printFriendsOnline(friends);
                     break;
                 case "-help":System.out.println(HELP);
                     break;
-                case "-p close":close = false;
+                case "-p close":notClose = false;
                     break;
                 case "-m send":Controller.sendMessage(user, token);
                    break;
