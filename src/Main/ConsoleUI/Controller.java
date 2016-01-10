@@ -8,7 +8,7 @@ package Main.ConsoleUI;
 import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
 import ActiveSession.DataTypes.Message;
-import ActiveSession.User;
+import ActiveSession.CurrentUser;
 import VkExceptions.BadParamsException;
 import VkExceptions.WrongNameException;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class Controller {
     private String help;
     
     
-    public static void printWelcomeMessage(String message,User user){
+    public static void printWelcomeMessage(String message,CurrentUser user){
         int dots;
         dots =  message.length();
         printDots(dots);
@@ -66,7 +66,24 @@ public class Controller {
             System.out.println("Нет друзей онлайн.");
         }
     }
-    public static void printFriends(User user){
+    public static void getInfo(AccessToken token)throws MalformedURLException,IOException,JAXBException{
+     //   getIdByName(null, null)
+    }
+    public static void getUnread(CurrentUser user,AccessToken token)throws IOException,JAXBException,BadParamsException{
+        List<Message> message = Message.get(0, 0, 100, 0, 1, 0, 0,token);
+        String name;
+        int count = message.size()-1;
+        while(count >= 0){
+            for(int i = 0;i < user.getFriends().size();i++){
+                if (user.getFriends().get(i).getUser_id() ==message.get(count).getUid()){
+                name = user.getFriends().get(i).getFirst_name();
+                System.out.println(name+":"+message.get(count).getBody()+"\n"+setData(message.get(count).getDate()));
+                }
+        }
+        count--;
+        }
+    }
+    public static void printFriends(CurrentUser user){
         int strSize = 60;
         int minStrSize = 60;
         String friends = "";
@@ -83,7 +100,7 @@ public class Controller {
             System.out.println("У тебя нет друзей.");
         }
     }
-    public static void returnDialog(User user,AccessToken token)throws BadParamsException,MalformedURLException,IOException,JAXBException{
+    public static void returnDialog(CurrentUser user,AccessToken token)throws BadParamsException,MalformedURLException,IOException,JAXBException{
         String name,last_message;
         Scanner scan = new Scanner(System.in,"866");
         System.out.print("Имя:");
@@ -115,7 +132,7 @@ public class Controller {
             String formattedDate = dateFormat.format(date);
             return formattedDate;
     }
-    private static int getIdByName(String name,User user)throws BadParamsException{
+    private static int getIdByName(String name,CurrentUser user)throws BadParamsException{
         String first_name = name.substring(0, name.indexOf(" "));
         String last_name = name.substring(name.indexOf(" ")+1,name.length());
         List<Friend> friends = user.getFriends();
@@ -133,7 +150,7 @@ public class Controller {
         }
         return id;
     }
-    public static void sendMessage(User user, AccessToken token)throws UnsupportedEncodingException,MalformedURLException,IOException,BadParamsException{
+    public static void sendMessage(CurrentUser user, AccessToken token)throws UnsupportedEncodingException,MalformedURLException,IOException,BadParamsException{
         String body;
         int id;
         Scanner scan = new Scanner(System.in,"866");

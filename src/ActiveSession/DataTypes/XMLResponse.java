@@ -41,5 +41,4 @@ public class XMLResponse {
     public List<Message> getMessage() {
         return message;
     }
-    
 }

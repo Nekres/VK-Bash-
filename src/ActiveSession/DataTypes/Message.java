@@ -40,17 +40,21 @@ public class Message {
     private int out;
     private String title;
     private String body;
-    private String from_id;
+    private int from_id;
     public static XMLResponse response;
     
 
     public static List<Message> get(int out, int offset, int count, int time_offset,
         int filters,int preview_length, int last_message_id,AccessToken token) throws MalformedURLException,IOException,JAXBException,BadParamsException{
+        try{
         URL url = new URL(MESSAGE_GET+"out="+out+"&offset="+offset+"&count="
         +count+"&time_offset="+time_offset+"&filters="+filters+"&preview_length="
         +preview_length+"&last_message_id="+last_message_id+"&access_token="+token.getAccess_token());
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         return getParser(connection).getMessage();
+        }catch(MalformedURLException e){
+            throw new BadParamsException();
+        }
     }
     private static XMLResponse getParser(HttpURLConnection connection) throws BadParamsException,JAXBException,IOException{
         JAXBParser parser = new JAXBParser();
@@ -145,11 +149,11 @@ public class Message {
         return body;
     }
     @XmlElement
-    public void setFrom_id(String from_id) {
+    public void setFrom_id(int from_id) {
         this.from_id = from_id;
     }
 
-    public String getFrom_id() {
+    public int getFrom_id() {
         return from_id;
     }
     

@@ -41,9 +41,14 @@ public class AccessToken {
             return text;
     }
     private int getId(File file)throws FileNotFoundException,IOException{
+      try{
       String uid = read(file);
       uid = uid.substring(uid.indexOf("id=")+3, uid.length());
       return Integer.valueOf(uid);
+        }catch(FileNotFoundException e){
+            System.out.println("Файл не найден.");
+        }
+      return 0;
     }
     public String getAccess_token(){
         return access_token;

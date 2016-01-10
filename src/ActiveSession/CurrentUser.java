@@ -12,6 +12,7 @@ import ActiveSession.DataTypes.XMLResponse;
 import DataXMLParsers.JAXBParser;
 import VkExceptions.BadParamsException;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
@@ -27,7 +28,7 @@ import javax.xml.bind.JAXBException;
  * @author Nekres
  */
 
-public class User  {
+public class CurrentUser  {
     private static final String METHOD = "https://api.vk.com/method/";
     private final int id;
     private final String name;
@@ -36,7 +37,7 @@ public class User  {
     private Message messages;
     private List<Friend> friends;
 
-    public User(AccessToken token) throws Exception{
+    public CurrentUser(AccessToken token) throws Exception{
         this.token = token;
         this.id = token.getUid();
         this.name = takeUserName();
