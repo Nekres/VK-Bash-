@@ -15,11 +15,16 @@ import javax.xml.bind.annotation.XmlType;
  * @author Nekres
  */
 @XmlRootElement(name = "response")
-@XmlType(propOrder = {"user","count","message"})
+@XmlType(propOrder = {"user","count","message","audio"})
 public class XMLResponse {
     private List<Friend> user;
     private List<Message> message;
     private int message_count;
+    private List<Audio> audio;
+    @XmlElement
+    public void setAudio(List<Audio> audio) {
+        this.audio = audio;
+    }
     @XmlElement
     public void setUser(List<Friend> user) {
         this.user = user;
@@ -41,4 +46,8 @@ public class XMLResponse {
     public List<Message> getMessage() {
         return message;
     }
+    public List<Audio> getAudio() {
+        return audio;
+    }
+    
 }

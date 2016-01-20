@@ -70,9 +70,11 @@ public class Controller {
      //   getIdByName(null, null)
     }
     public static void getUnread(CurrentUser user,AccessToken token)throws IOException,JAXBException,BadParamsException{
+        try{
+        int count = 0;
         List<Message> message = Message.get(0, 0, 100, 0, 1, 0, 0,token);
         String name;
-        int count = message.size()-1;
+        count = message.size()-1;
         while(count >= 0){
             for(int i = 0;i < user.getFriends().size();i++){
                 if (user.getFriends().get(i).getUser_id() ==message.get(count).getUid()){
@@ -81,6 +83,9 @@ public class Controller {
                 }
         }
         count--;
+        }
+        }catch(BadParamsException e){
+            System.out.println("Новых сообщений нет.");
         }
     }
     public static void printFriends(CurrentUser user){
