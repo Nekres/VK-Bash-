@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -110,10 +111,16 @@ public class Controller {
         Scanner scan = new Scanner(System.in,"866");
         System.out.print("Имя:");
         name = scan.nextLine();
-        System.out.print("Кол-во:");
+       
+        List<Message> message = new ArrayList<>();
         try{
+        System.out.print("Кол-во:");
         int id = getIdByName(name, user);
-        List<Message> message = Message.getHistory(scan.nextInt(), id, token);
+        try{
+        message = Message.getHistory(scan.nextInt(), id, token);
+        }catch(BadParamsException e){
+            System.out.println("Сообщений нет.");
+        }
             for(int i = message.size()-1;i != -1;i--){
                 if (Integer.valueOf(message.get(i).getFrom_id()) == user.getId()){
                 System.out.println("Вы: "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));

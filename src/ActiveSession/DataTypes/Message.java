@@ -80,14 +80,18 @@ public class Message {
         return reader;
     }
     public static List<Message> getHistory(int count, int user_id,AccessToken token)throws MalformedURLException,IOException,BadParamsException,JAXBException{
-        URL url = new URL(MESSAGE_GET_HISTORY+"count="+count+"&user_id="+user_id+"&access_token="+token.getAccess_token());
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        try{
+            URL url = new URL(MESSAGE_GET_HISTORY+"count="+count+"&user_id="+user_id+"&access_token="+token.getAccess_token());
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 //        String text = "";
 //        while((text = reader.readLine())!= null){ Premature end of file <------
 //            System.out.println(text);
 //        }
-        return getParser(connection).getMessage();
+            return getParser(connection).getMessage();
+        }catch(MalformedURLException e){
+            throw new BadParamsException();
+        }
     }
     public static int getCount(){
         return response.getCount();
