@@ -9,11 +9,20 @@ import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
 import ActiveSession.DataTypes.Message;
 import ActiveSession.CurrentUser;
+import ActiveSession.DataTypes.Audio;
+import DataXMLParsers.JAXBParser;
+import Main.Settings.Settings;
 import VkExceptions.BadParamsException;
 import VkExceptions.WrongNameException;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channel;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,8 +36,7 @@ import javax.xml.bind.JAXBException;
  * @author Nekres
  */
 public class Controller {
-    private String help;
-    
+    private static final JAXBParser parser = new JAXBParser();
     
     public static void printWelcomeMessage(String message,CurrentUser user){
         int dots;
@@ -106,16 +114,15 @@ public class Controller {
             System.out.println("У тебя нет друзей.");
         }
     }
-    public static void returnDialog(CurrentUser user,AccessToken token)throws BadParamsException,MalformedURLException,IOException,JAXBException{
-        String name,last_message;
+    public static void returnDialog(CurrentUser user,AccessToken token,Settings settings)throws BadParamsException,MalformedURLException,IOException,JAXBException{
+        String name;
         Scanner scan = new Scanner(System.in,"866");
         System.out.print("Имя:");
         name = scan.nextLine();
-       
         List<Message> message = new ArrayList<>();
         try{
         System.out.print("Кол-во:");
-        int id = getIdByName(name, user);
+        int id = getIdByName(name, user, settings);
         try{
         message = Message.getHistory(scan.nextInt(), id, token);
         }catch(BadParamsException e){
@@ -124,12 +131,10 @@ public class Controller {
             for(int i = message.size()-1;i != -1;i--){
                 if (Integer.valueOf(message.get(i).getFrom_id()) == user.getId()){
                 System.out.println("Вы: "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
-                last_message = message.get(i).getBody();
                 }
                 else{
                 String first_name = name.substring(0, name.indexOf(" "));
                 System.out.println(first_name+": "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
-                last_message = message.get(i).getBody();
                 }
             }
              }catch(BadParamsException e){
@@ -144,7 +149,13 @@ public class Controller {
             String formattedDate = dateFormat.format(date);
             return formattedDate;
     }
-    private static int getIdByName(String name,CurrentUser user)throws BadParamsException{
+    private static int getIdByName(String name,CurrentUser user, Settings settings)throws BadParamsException{
+        for (int i = 0;i < settings.getFriend().size();i++){
+        if (settings.getFriend().get(i).getShort_name().equals(name)){
+            name = settings.getFriend().get(i).getReal_name();
+            break;
+            }
+        }
         String first_name = name.substring(0, name.indexOf(" "));
         String last_name = name.substring(name.indexOf(" ")+1,name.length());
         List<Friend> friends = user.getFriends();
@@ -162,13 +173,13 @@ public class Controller {
         }
         return id;
     }
-    public static void sendMessage(CurrentUser user, AccessToken token)throws UnsupportedEncodingException,MalformedURLException,IOException,BadParamsException{
+    public static void sendMessage(CurrentUser user, AccessToken token, Settings settings)throws UnsupportedEncodingException,MalformedURLException,IOException,BadParamsException{
         String body;
         int id;
         Scanner scan = new Scanner(System.in,"866");
         System.out.print("Имя:");
         try{
-        id = getIdByName(scan.nextLine(), user);
+        id = getIdByName(scan.nextLine(), user,settings);
         System.out.println("Сообщение:");
         body = scan.nextLine();
         Message.send(id,body, token);
@@ -176,6 +187,25 @@ public class Controller {
         }catch(BadParamsException e){
             System.out.println("Неверное имя.");
         }
+    }
+    public static void download(CurrentUser user, Settings settings, AccessToken token)throws MalformedURLException,JAXBException,IOException{
+        Scanner scan = new Scanner(System.in,"866");
+        System.out.print("Номер по списку:");
+        List<Audio> audios = Audio.get(user.getId(),token);
+        int n = scan.nextInt()-1;
+        if (n > audios.size()){
+            System.out.println("Неверный номер.");
+        }
+        else{
+            String name = audios.get(n).getArtist()+" - "+audios.get(n).getTitle()+".mp3";
+            System.out.println(name+"\nзагружается...");
+            URL url = new URL(audios.get(n).getUrl());
+            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+            FileOutputStream file = new FileOutputStream(new File(name));
+            file.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            System.out.println("Загружено.");
+        }
+        
     }
     
     

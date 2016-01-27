@@ -39,10 +39,6 @@ public class Audio {
         List<Audio> audios;
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String text;
-        while((text = reader.readLine()) != null){
-            System.out.println(text);
-        }
         XMLResponse response;
         JAXBParser parser = new JAXBParser();
         response = (XMLResponse)parser.getObject(XMLResponse.class, connection.getInputStream());

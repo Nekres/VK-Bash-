@@ -115,7 +115,6 @@ public class Oauth {
             this.response_type = response_type;
             return this;
         }
-        
 
         public String getClient_id() {
             return client_id;
@@ -140,6 +139,11 @@ public class Oauth {
         public String getResponse_type() {
             return response_type;
         }
+        
+
+        public ApiBuilder() {
+        }
+        
         public Oauth build(){
             return new Oauth(this);
         }
