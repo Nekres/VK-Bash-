@@ -28,4 +28,5 @@
 Третья - запуск самого приложения с помощью java. Так java -jar путь\Messenger.jar<br>
 Сохранить .bat и использовать в дальнейшем.
 
-
+Контактная информация: shikoryakmisha@mail.ru
+http://vk.com/not_more_nekres
