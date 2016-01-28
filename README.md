@@ -29,4 +29,4 @@
 Сохранить .bat и использовать в дальнейшем.<br>
 
 Контактная информация: shikoryakmisha@mail.ru<br>
-http://vk.com/not_more_nekres
+http://vk.com/id172321388
