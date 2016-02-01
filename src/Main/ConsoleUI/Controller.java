@@ -25,7 +25,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -38,6 +37,7 @@ import javax.xml.bind.JAXBException;
  */
 public class Controller {
     private static final JAXBParser PARSER = new JAXBParser();
+    private static final String BREAK = "break";
     private static final Scanner SCANNER = new Scanner(System.in,"866");
     private static boolean notComplete = true;
     

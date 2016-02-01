@@ -10,9 +10,11 @@
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/Friend.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/Message.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/VkExceptions/WrongNameException.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/VkExceptions/AccessPermissionException.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/DataXMLParsers/JAXBParser.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/XMLResponse.java</file>
-            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Main/Settings/Name.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Account/AccessToken.java</file>
+            <file>file:/D:/Projects/NetBeansProjects/Vk/src/Main/Settings/Friend.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/Account/Oauth.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/DataTypes/Audio.java</file>
             <file>file:/D:/Projects/NetBeansProjects/Vk/src/ActiveSession/CurrentUser.java</file>

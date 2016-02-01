@@ -38,9 +38,9 @@ public class Main{
             AccessToken token = new AccessToken();
             Scanner scan = new Scanner(System.in,"866");
             try{
-            token = new AccessToken(new File("A:\\accessTokens.txt"));
+            token = new AccessToken(new File(args[0]));
             }
-            catch(BadParamsException e){
+            catch(ArrayIndexOutOfBoundsException e){
                 System.out.println("Укажите правильный путь к токену. Например disk:\\someFolder\\token.txt\nPress enter to exit.");
                 scan.nextLine();
                 System.exit(0);
@@ -56,10 +56,7 @@ public class Main{
             }catch(UnmarshalException e){
                 parser.saveObjectToFile(new File(PATH), settings);
             }
-            System.out.println(settings.getFriend().size());
-        //    settings.add("Igor Raskolnikov", "Igoresha", user);
             parser.saveObjectToFile(new File(PATH), settings);
-            Controller.printShorten(settings);
             String choice;
             boolean notClose = true;
             while(notClose){
@@ -88,6 +85,7 @@ public class Main{
                 case "-f cut":Controller.makeShorter(user, settings,PATH);
                    break;
                 case "-f short":Controller.printShorten(settings);
+                   break;
                 default:System.out.println("Неверная команда.");
             }
             }
