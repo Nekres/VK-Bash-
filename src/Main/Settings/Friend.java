@@ -6,7 +6,6 @@
 package Main.Settings;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -16,15 +15,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement
 @XmlType(propOrder = {"real_name","short_name"})
-public class Name {
+public class Friend {
     private String real_name;
     private String short_name;
     
-    public Name(String real_name, String short_name) {
+    public Friend(String real_name, String short_name) {
         this.real_name = real_name;
         this.short_name = short_name;
     }
-    public Name(){}
+    public Friend(){}
     @XmlElement
     public void setReal_name(String real_name) {
         this.real_name = real_name;

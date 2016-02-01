@@ -17,7 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-import javafx.scene.layout.BorderStroke;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -84,10 +83,6 @@ public class Message {
             URL url = new URL(MESSAGE_GET_HISTORY+"count="+count+"&user_id="+user_id+"&access_token="+token.getAccess_token());
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-//        String text = "";
-//        while((text = reader.readLine())!= null){ Premature end of file <------
-//            System.out.println(text);
-//        }
             return getParser(connection).getMessage();
         }catch(MalformedURLException e){
             throw new BadParamsException();

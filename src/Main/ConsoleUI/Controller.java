@@ -20,13 +20,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.TimeZone;
 import javax.xml.bind.JAXBException;
@@ -36,7 +37,9 @@ import javax.xml.bind.JAXBException;
  * @author Nekres
  */
 public class Controller {
-    private static final JAXBParser parser = new JAXBParser();
+    private static final JAXBParser PARSER = new JAXBParser();
+    private static final Scanner SCANNER = new Scanner(System.in,"866");
+    private static boolean notComplete = true;
     
     public static void printWelcomeMessage(String message,CurrentUser user){
         int dots;
@@ -76,7 +79,7 @@ public class Controller {
         }
     }
     public static void getInfo(AccessToken token)throws MalformedURLException,IOException,JAXBException{
-     //   getIdByName(null, null)
+     //   getIdByName(null, null) // Позже
     }
     public static void getUnread(CurrentUser user,AccessToken token)throws IOException,JAXBException,BadParamsException{
         try{
@@ -116,20 +119,22 @@ public class Controller {
     }
     public static void returnDialog(CurrentUser user,AccessToken token,Settings settings)throws BadParamsException,MalformedURLException,IOException,JAXBException{
         String name;
-        Scanner scan = new Scanner(System.in,"866");
         System.out.print("Имя:");
-        name = scan.nextLine();
+        name = SCANNER.nextLine();
+        if (settings.getFriend().containsKey(name)){
+            name = settings.getFriend().get(name);
+        }
         List<Message> message = new ArrayList<>();
         try{
-        System.out.print("Кол-во:");
         int id = getIdByName(name, user, settings);
+        System.out.print("Кол-во:");
         try{
-        message = Message.getHistory(scan.nextInt(), id, token);
+        message = Message.getHistory(SCANNER.nextInt(), id, token);
         }catch(BadParamsException e){
             System.out.println("Сообщений нет.");
         }
             for(int i = message.size()-1;i != -1;i--){
-                if (Integer.valueOf(message.get(i).getFrom_id()) == user.getId()){
+                if (message.get(i).getFrom_id() == user.getId()){
                 System.out.println("Вы: "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
                 }
                 else{
@@ -137,7 +142,7 @@ public class Controller {
                 System.out.println(first_name+": "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
                 }
             }
-             }catch(BadParamsException e){
+             }catch(WrongNameException e){
             System.out.println("Неверное имя");
         }
     }
@@ -149,18 +154,19 @@ public class Controller {
             String formattedDate = dateFormat.format(date);
             return formattedDate;
     }
-    private static int getIdByName(String name,CurrentUser user, Settings settings)throws BadParamsException{
-        for (int i = 0;i < settings.getFriend().size();i++){
-        if (settings.getFriend().get(i).getShort_name().equals(name)){
-            name = settings.getFriend().get(i).getReal_name();
-            break;
-            }
+    public static int getIdByName(String name,CurrentUser user, Settings settings)throws WrongNameException{
+        int id;
+        String first_name;
+        String last_name;
+        if (settings.getFriend().containsKey(name)){
+            name = settings.getFriend().get(name);
         }
-        String first_name = name.substring(0, name.indexOf(" "));
-        String last_name = name.substring(name.indexOf(" ")+1,name.length());
+        try{
+        first_name = name.substring(0, name.indexOf(" "));
+        last_name = name.substring(name.indexOf(" ")+1,name.length());
         List<Friend> friends = user.getFriends();
         int i = 0;
-        int id = 0;
+        id = 0;
         while(i < friends.size()){
             if ((friends.get(i).getFirst_name().trim().toLowerCase().equals(first_name.trim().toLowerCase()))
                && (friends.get(i).getLast_name().trim().toLowerCase().equals(last_name.trim().toLowerCase()))){
@@ -168,31 +174,42 @@ public class Controller {
             }
             i++;
         }
+        }catch(StringIndexOutOfBoundsException e){
+                throw new WrongNameException();
+            }
         if (id == 0){
             throw new WrongNameException();
         }
+        
         return id;
     }
     public static void sendMessage(CurrentUser user, AccessToken token, Settings settings)throws UnsupportedEncodingException,MalformedURLException,IOException,BadParamsException{
-        String body;
         int id;
-        Scanner scan = new Scanner(System.in,"866");
-        System.out.print("Имя:");
-        try{
-        id = getIdByName(scan.nextLine(), user,settings);
-        System.out.println("Сообщение:");
-        body = scan.nextLine();
+        id = promptName(user, settings);
+        System.out.print("Сообщение:");
+        String body = SCANNER.nextLine();
         Message.send(id,body, token);
         System.out.println("Отправлено.");
-        }catch(BadParamsException e){
-            System.out.println("Неверное имя.");
+    
+}
+    public static void showMusic(CurrentUser user, AccessToken token)throws MalformedURLException,IOException,JAXBException{
+        System.out.println("Кол-во:");
+        int n = SCANNER.nextInt();
+        printTo(n, user, token);
+    }
+    public static void printTo(int to, CurrentUser user, AccessToken token)throws MalformedURLException,IOException,JAXBException{
+        List<Audio> audios = Audio.get(user.getId(), token);
+        if (to > audios.size()){
+            to = audios.size();
+        }
+        for (int i = 1; i-1 < to;i++){
+            System.out.println(i+" "+audios.get(i-1).getArtist()+" - " + audios.get(i-1).getTitle());
         }
     }
     public static void download(CurrentUser user, Settings settings, AccessToken token)throws MalformedURLException,JAXBException,IOException{
-        Scanner scan = new Scanner(System.in,"866");
         System.out.print("Номер по списку:");
         List<Audio> audios = Audio.get(user.getId(),token);
-        int n = scan.nextInt()-1;
+        int n = SCANNER.nextInt()-1;
         if (n > audios.size()){
             System.out.println("Неверный номер.");
         }
@@ -207,6 +224,42 @@ public class Controller {
         }
         
     }
-    
-    
+    private static int promptName(CurrentUser user, Settings settings)throws WrongNameException,BadParamsException{
+        notComplete = true;
+        while(notComplete){
+        System.out.print("Имя:");
+        try{
+        int id = getIdByName(SCANNER.nextLine(),user, settings);
+        return id;
+        }catch(WrongNameException e){
+            System.out.println("Неверное имя.");
+        }
+        }
+        return 0;
+    }
+    public static void makeShorter(CurrentUser user, Settings settings, String path) throws BadParamsException,JAXBException{
+        System.out.println("Имя друга:");
+        String name = "";
+        notComplete = true;
+        while(notComplete){
+        name = SCANNER.nextLine();
+        try{
+        getIdByName(name, user, settings);
+        notComplete = false;
+        }catch(WrongNameException e){
+            System.out.println("Неверное имя.");
+            System.out.println("Еще раз:");
+        }
+        }
+        System.out.println("Короткое имя:");
+        String short_name = SCANNER.nextLine();
+        settings.add(name, short_name, user);
+        PARSER.saveObjectToFile(new File(path), settings);
+        System.out.println("Готово.");
+    }
+    public static void printShorten(Settings settings){
+        for (Map.Entry<String,String> entry : settings.getFriend().entrySet()){
+            System.out.println("Полное имя: " + entry.getValue() + "||" + "Короткое: "+entry.getKey());
+        }
+    }
 }
