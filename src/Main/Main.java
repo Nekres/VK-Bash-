@@ -8,11 +8,15 @@ package Main;
 import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
 import ActiveSession.CurrentUser;
+import ActiveSession.DataTypes.Message;
 import DataXMLParsers.JAXBParser;
 import Main.ConsoleUI.Controller;
 import Main.Settings.Settings;
 import VkExceptions.BadParamsException;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
 import javax.xml.bind.UnmarshalException;
@@ -45,6 +49,9 @@ public class Main{
                 scan.nextLine();
                 System.exit(0);
             }
+            URL stat = new URL("https://api.vk.com/method/stats.trackVisitor?access_token=" + token.getAccess_token());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stat.openStream()));
+            reader.readLine();
             CurrentUser user = new CurrentUser(token);
             System.out.println("Raskolnikov v1.0 launched.");
             Controller.printWelcomeMessage("Добро пожаловать в чат! Он работает как командная строка. Список команд -help :",user);
