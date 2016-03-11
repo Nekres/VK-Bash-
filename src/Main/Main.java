@@ -27,12 +27,12 @@ import javax.xml.bind.UnmarshalException;
  */
 public class Main{
     private static final String PATH = "settings.xml";
-    private static final String HELP = "\n-f all - просмотреть всех друзей\n-f online - просмотреть всех друзей онлайн\n-f info - подробная информация о друге"+
-    "\n-f cut -задать короткое имя(в дальнейшем обращаться к нему так)\n-f short - показать короткие имена друзей"
-    + "\n-m send - написать сообщение\n-m history -открыть историю переписки с другом \n-m unread - показать все непрочитанные сообщения"+
-    "\n-a show - показать определенное кол-во песен\n-a show all - показать все песни"
-    +"\n-a download arg1 - где \"arg1\" номер песни в списке аудиозаписей"+
-    "\n-p close - закрыть приложение\n-p refresh - обновить";
+    private static final String HELP = "\nall - просмотреть всех друзей\nonline - просмотреть всех друзей онлайн"+
+    "\ncut -задать короткое имя(в дальнейшем обращаться к нему так)\nshort - показать короткие имена друзей"
+    + "\nsend - написать сообщение\nhistory -открыть историю переписки с другом \nunread - показать все непрочитанные сообщения"+
+    "\nshow - показать определенное кол-во песен\nshow all - показать все песни"
+    +"\ndownload arg1 - где \"arg1\" номер песни в списке аудиозаписей"+
+    "\nclose - закрыть приложение\n Если вы хотите прервать отправку сообщения, введите в тело break";
 
     /**
      * @param args the command line arguments
@@ -69,29 +69,29 @@ public class Main{
             while(notClose){
             choice = scan.nextLine().trim().toLowerCase();
             switch(choice){
-                case "-m unread":Controller.getUnread(user, token);
+                case "unread":Controller.getUnread(user, token);
                     break;
-                case "-m history":Controller.returnDialog(user, token, settings);
+                case "history":Controller.returnDialog(user, token, settings);
                     break;
-                case "-f all":Controller.printFriends(user);
+                case "all":Controller.printFriends(user);
                     break;
-                case "-f online":Controller.printFriendsOnline(friends);
+                case "online":Controller.printFriendsOnline(friends);
                     break;
-                case "-help":System.out.println(HELP);
+                case "help":System.out.println(HELP);
                     break;
-                case "-p close":notClose = false;
+                case "close":notClose = false;
                     break;
-                case "-m send":Controller.sendMessage(user, token,settings);
+                case "send":Controller.sendMessage(user, token,settings);
                    break;
-                case "-a download":Controller.download(user, settings, token);
+                case "download":Controller.download(user, settings, token);
                    break;
-                case "-a show":Controller.showMusic(user, token);
+                case "show":Controller.showMusic(user, token);
                    break;
-                case "-a show all":Controller.printTo(600000, user, token);
+                case "show all":Controller.printTo(600000, user, token);
                    break;
-                case "-f cut":Controller.makeShorter(user, settings,PATH);
+                case "cut":Controller.makeShorter(user, settings,PATH);
                    break;
-                case "-f short":Controller.printShorten(settings);
+                case "short":Controller.printShorten(settings);
                    break;
                 default:System.out.println("Неверная команда.");
             }

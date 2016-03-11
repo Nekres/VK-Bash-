@@ -188,6 +188,9 @@ public class Controller {
         id = promptName(user, settings);
         System.out.print("Сообщение:");
         String body = SCANNER.nextLine();
+        if (body.equals("break")){
+            System.out.println("Прервано.");
+            return; }
         Message.send(id,body, token);
         System.out.println("Отправлено.");
     
