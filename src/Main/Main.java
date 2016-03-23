@@ -8,11 +8,9 @@ package Main;
 import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
 import ActiveSession.CurrentUser;
-import ActiveSession.DataTypes.Message;
 import DataXMLParsers.JAXBParser;
 import Main.ConsoleUI.Controller;
 import Main.Settings.Settings;
-import VkExceptions.BadParamsException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -32,7 +30,8 @@ public class Main{
     + "\nsend - написать сообщение\nhistory -открыть историю переписки с другом \nunread - показать все непрочитанные сообщения"+
     "\nshow - показать определенное кол-во песен\nshow all - показать все песни"
     +"\ndownload arg1 - где \"arg1\" номер песни в списке аудиозаписей"+
-    "\nclose - закрыть приложение\n Если вы хотите прервать отправку сообщения, введите в тело break";
+    "\nclose - закрыть приложение\n Если вы хотите прервать отправку сообщения, введите в тело break"+
+            "\n download all - скачать все песни.";
 
     /**
      * @param args the command line arguments
@@ -55,7 +54,6 @@ public class Main{
             CurrentUser user = new CurrentUser(token);
             System.out.println("Raskolnikov v1.0 launched.");
             Controller.printWelcomeMessage("Добро пожаловать в чат! Он работает как командная строка. Список команд -help :",user);
-            List<Friend> friends = Friend.get(user.getId(),"name",100,0,"city,domain,online","nom",token);
             Settings settings = new Settings();
             JAXBParser parser = new JAXBParser();
             try{
@@ -75,7 +73,7 @@ public class Main{
                     break;
                 case "all":Controller.printFriends(user);
                     break;
-                case "online":Controller.printFriendsOnline(friends);
+                case "online":Controller.printFriendsOnline(user);
                     break;
                 case "help":System.out.println(HELP);
                     break;
@@ -93,6 +91,10 @@ public class Main{
                    break;
                 case "short":Controller.printShorten(settings);
                    break;
+                case "info":Controller.getInfo(user, token, settings);
+                    break;
+                case "download all":Controller.downloadAll(user, settings, token);
+                   break;   
                 default:System.out.println("Неверная команда.");
             }
             }

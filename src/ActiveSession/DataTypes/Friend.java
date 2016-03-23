@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         friendParser = (XMLResponse)parser.getObject(XMLResponse.class,connection.getInputStream());
         if (friendParser.getUser() == null){
-            throw new BadParamsException();
+            System.out.println("У тебя нет друзей:)\nПриходи когда будут.");
         }
         return friendParser.getUser();
     }

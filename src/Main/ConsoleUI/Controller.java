@@ -10,6 +10,7 @@ import ActiveSession.DataTypes.Friend;
 import ActiveSession.DataTypes.Message;
 import ActiveSession.CurrentUser;
 import ActiveSession.DataTypes.Audio;
+import ActiveSession.DataTypes.User.User;
 import DataXMLParsers.JAXBParser;
 import Main.Settings.Settings;
 import VkExceptions.BadParamsException;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -55,7 +58,8 @@ public class Controller {
         for (int i=0; i < string1;i++)
         System.out.print(".");
     }
-    public static void printFriendsOnline(List<Friend> friends){
+    public static void printFriendsOnline(CurrentUser user){
+        List<Friend> friends = user.getFriends();
         int i = 0;
         int strSize = 60;
         int minStrSize = 60;
@@ -76,10 +80,11 @@ public class Controller {
         System.out.println(online1);
         }catch(NullPointerException e){
             System.out.println("Нет друзей онлайн.");
-        }
     }
-    public static void getInfo(AccessToken token)throws MalformedURLException,IOException,JAXBException{
-     //   getIdByName(null, null) // Позже
+    }
+    public static void getInfo(CurrentUser user,AccessToken token,Settings settings)throws MalformedURLException,IOException,JAXBException,BadParamsException{
+        User u = User.getInfo(Integer.toString(promptName(user, settings)),token);
+        System.out.println(u.toString());
     }
     public static void getUnread(CurrentUser user,AccessToken token)throws IOException,JAXBException,BadParamsException{
         try{
@@ -135,18 +140,18 @@ public class Controller {
         }
             for(int i = message.size()-1;i != -1;i--){
                 if (message.get(i).getFrom_id() == user.getId()){
-                System.out.println("Вы: "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
+                System.out.println("Вы: "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate())+"state:"+message.get(i).getRead_state());
                 }
                 else{
                 String first_name = name.substring(0, name.indexOf(" "));
-                System.out.println(first_name+": "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate()));
+                System.out.println(first_name+": "+message.get(i).getBody()+"\n"+setData(message.get(i).getDate())+"state:"+message.get(i).getRead_state());
                 }
             }
              }catch(WrongNameException e){
             System.out.println("Неверное имя");
         }
     }
-    private static String setData(int a){
+    public static String setData(int a){
             long dateTime = a;
             Date date = new Date(dateTime*1000L);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -212,20 +217,44 @@ public class Controller {
     public static void download(CurrentUser user, Settings settings, AccessToken token)throws MalformedURLException,JAXBException,IOException{
         System.out.print("Номер по списку:");
         List<Audio> audios = Audio.get(user.getId(),token);
-        int n = SCANNER.nextInt()-1;
-        if (n > audios.size()){
+        int n = SCANNER.nextInt();
+        if (n > audios.size() || n <= 0){
             System.out.println("Неверный номер.");
         }
         else{
+            n = n -1;
             String name = audios.get(n).getArtist()+" - "+audios.get(n).getTitle()+".mp3";
-            System.out.println(name+"\nзагружается...");
             URL url = new URL(audios.get(n).getUrl());
-            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-            FileOutputStream file = new FileOutputStream(new File(name));
-            file.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            System.out.println("Загружено.");
+            load(url, name);
         }
         
+    }
+    private static void load(URL url, String name)throws IOException,MalformedURLException{
+            name = name.replace(':', ' ').replace('?', ' ').replace('*', ' ').replace('>', ' ').replace('<', ' ')
+                    .replace('/', ' ').replace('\\', ' ').replace('\"', ' ').replace('|', ' ');
+            try{
+            System.out.println(name + "  загружается...");
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
+            File music = new File("music");
+            if (!music.mkdir()){
+                music.mkdir();
+            }
+            FileOutputStream file = new FileOutputStream(new File(music.getPath()+"/"+name));
+            file.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            System.out.println("Загружено");
+            }
+            catch(ConnectException e){
+                System.out.println("Невозможно скачать.");
+            }
+            
+    }
+    public static void downloadAll(CurrentUser user, Settings settings, AccessToken token) throws MalformedURLException,IOException,JAXBException{
+        List<Audio> audios = Audio.get(user.getId(),token);
+        for (int i = 1; i < audios.size();i++){
+        load(new URL(audios.get(i-1).getUrl()), audios.get(i-1).getArtist() +" "+  audios.get(i-1).getTitle()+".mp3");
+            System.out.print(" "+ i + "/"+ audios.size()+"\n");
+        }
     }
     private static int promptName(CurrentUser user, Settings settings)throws WrongNameException,BadParamsException{
         notComplete = true;

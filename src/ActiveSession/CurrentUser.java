@@ -8,11 +8,10 @@ package ActiveSession;
 import Account.AccessToken;
 import ActiveSession.DataTypes.Friend;
 import ActiveSession.DataTypes.Message;
-import ActiveSession.DataTypes.XMLResponse;
+import ActiveSession.DataTypes.User.Response;
 import DataXMLParsers.JAXBParser;
 import VkExceptions.BadParamsException;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
@@ -34,8 +33,8 @@ public class CurrentUser  {
     private final String name;
     private final AccessToken token;
     private final int unreadMessages;
-    private Message messages;
     private List<Friend> friends;
+    private final JAXBParser parser = new JAXBParser();
 
     public CurrentUser(AccessToken token) throws Exception{
         this.token = token;
@@ -45,24 +44,15 @@ public class CurrentUser  {
         this.unreadMessages = takeUnreadMessages();
     }
     
-    private String takeUserName () throws IOException,InterruptedException{
+    private String takeUserName () throws IOException,InterruptedException,JAXBException{
         String user;
-        user = invokeJSON(new URL(METHOD+"users.get?user_ids="+id+"&name_case=nom"));
-        user = user.substring(user.indexOf("first_name")+13, user.indexOf("hidden")-3);
-        user = user.replace("\",\"last_name\":\"", " ");
-        return user;
-    }
-    private String invokeJSON(URL url) throws IOException,InterruptedException{
-        String text;
-        String info = "";
-        BufferedReader reader = connect(url);
-        while ((text = reader.readLine()) != null){
-            info = text;
-        }
-        return info;
+        URL url = new URL(METHOD+"users.get.xml?user_ids="+id+"&name_case=nom");
+        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        Response response = new Response();
+        response = (Response)parser.getObject(Response.class,connection.getInputStream());
+        return response.getUser().getFirst_name() + " "+ response.getUser().getLast_name();
     }
     private int takeUnreadMessages() throws MalformedURLException,IOException,InterruptedException,JAXBException,BadParamsException{
-        JAXBParser parser = new JAXBParser();
         int i = 0;
         int count = 0;
         try{

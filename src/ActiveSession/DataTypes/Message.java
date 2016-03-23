@@ -69,20 +69,18 @@ public class Message {
         try{
         URL url = new URL(MESSAGE_SEND+"user_id="+id+"&message="+URLEncoder.encode(message_body,"UTF-8")+
         "&access_token="+token.getAccess_token());
-        BufferedReader reader = connect(url);
+        connect(url).close();
         }catch(UnsupportedEncodingException e){
             System.out.println("message not sent");}
     }
     private static BufferedReader connect(URL url)throws IOException{
         HttpURLConnection connection =(HttpURLConnection)url.openConnection();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        return reader;
+        return new BufferedReader(new InputStreamReader(connection.getInputStream()));
     }
     public static List<Message> getHistory(int count, int user_id,AccessToken token)throws MalformedURLException,IOException,BadParamsException,JAXBException{
         try{
             URL url = new URL(MESSAGE_GET_HISTORY+"count="+count+"&user_id="+user_id+"&access_token="+token.getAccess_token());
             HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             return getParser(connection).getMessage();
         }catch(MalformedURLException e){
             throw new BadParamsException();

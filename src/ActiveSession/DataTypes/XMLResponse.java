@@ -21,6 +21,8 @@ public class XMLResponse {
     private List<Message> message;
     private int message_count;
     private List<Audio> audio;
+
+    
     @XmlElement
     public void setAudio(List<Audio> audio) {
         this.audio = audio;
