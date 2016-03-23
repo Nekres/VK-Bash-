@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
     
     public static List<Friend> get(int user_id,String order,int count,int offset,String fields,String name_case,AccessToken token)
     throws MalformedURLException,IOException,JAXBException,BadParamsException{
-        URL url = new URL(FRIEND_GET+"user_id="+user_id+"&order=name&count=50&offset=0"
+        URL url = new URL(FRIEND_GET+"user_id="+user_id+"&order=name&count=1500&offset=0"
         + "&fields=city,domain&name_case=nom&access_token="+token.getAccess_token());
         JAXBParser parser = new JAXBParser();
         XMLResponse friendParser;

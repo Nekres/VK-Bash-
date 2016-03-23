@@ -40,12 +40,11 @@ public class CurrentUser  {
         this.token = token;
         this.id = token.getUid();
         this.name = takeUserName();
-        this.friends = Friend.get(token.getUid(),"name",50,0,"city,domain","nom",token);
+        this.friends = Friend.get(token.getUid(),token);
         this.unreadMessages = takeUnreadMessages();
     }
     
     private String takeUserName () throws IOException,InterruptedException,JAXBException{
-        String user;
         URL url = new URL(METHOD+"users.get.xml?user_ids="+id+"&name_case=nom");
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
         Response response = new Response();
@@ -70,12 +69,13 @@ public class CurrentUser  {
     }
     public static BufferedReader connect(URL url) throws IOException,ConnectException,InterruptedException{
      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-     connection.setConnectTimeout(15000);
+     connection.setConnectTimeout(3000);
      BufferedReader reader;
      try{
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
      }catch(SocketTimeoutException e){
         connection.disconnect();
+        connection.setConnectTimeout(15000);
         connection.connect();
         reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
      }
