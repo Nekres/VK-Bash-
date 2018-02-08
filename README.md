@@ -30,5 +30,3 @@
 Третья - запуск самого приложения с помощью java. Так java -jar путь\Messenger.jar<br>
 Сохранить .bat и использовать в дальнейшем.<br>
 
-Контактная информация: shikoryakmisha@mail.ru<br>
-http://vk.com/id172321388
